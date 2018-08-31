@@ -1,8 +1,7 @@
-"use strict";
 var color = [0, 0, 0];
-var size = 5;
-var offsety = 5;
-var offsetx = -5;
+var size = 1;
+var offsety = 15;
+var offsetx = 0;
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
@@ -14,53 +13,40 @@ function paint() {
   clear(getImgData());
 
 
-
-  /*
-  canvas.addEventListener("mousemove", function(event) {
-  // var px = -1;
-  // var py = -1;
-  // ver grosor
-    if (event.buttons == 1) {
-    var x = event.layerX+offsetx;
-    var y = event.layerY+offsety;
-    if (px != -1) {
-      ctx.stokeStyle() = rgbToHex(color[0], color[1], color[2]);
-      ctx.beginPath();
-      ctx.moveTo(px, py);
-      ctx.lineTo(x, y);
-      ctx.stoke();
-      ctx.closePath();
-      px = x;
-      py = y;
-    }
-    else {
-      px = -1;
-      py = -1;
-    }
-      ctx.fillStyle = rgbToHex(color[0], color[1], color[2]);
-
-      ctx.fillRect(x, y, size, size);
-    }
-  })
-
-*/
   /*********************************************************************************************************************************************/
 
   canvas.addEventListener("mousemove", function(event) {
-    if (event.buttons == 1) {
+    if (event.buttons != 1) {
+      px = -1;
+      py = -1;
+    }
+    else {
+      ctx.lineWidth = size;
       var x = event.layerX+offsetx;
       var y = event.layerY+offsety;
-      ctx.fillStyle = rgbToHex(color[0], color[1], color[2]);
-      ctx.fillRect(x, y, size, size);
+
+      if (px != -1) {
+        ctx.lineCap = "round";
+        ctx.strokeStyle = rgbToHex(color[0], color[1], color[2]);
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.closePath();
+      }
+      px = x;
+      py = y;
+
     }
+
   })
 
-  canvas.addEventListener("click", function(event) {
-    var x = event.layerX+offsetx;
-    var y = event.layerY+offsety;
-    ctx.fillStyle = rgbToHex(color[0], color[1], color[2]);
-    ctx.fillRect(x, y, size, size);
-  })
+  // canvas.addEventListener("click", function(event) {
+  //   var x = event.layerX+offsetx;
+  //   var y = event.layerY+offsety;
+  //   ctx.fillStyle = rgbToHex(color[0], color[1], color[2]);
+  //   ctx.fillRect(x, y, size, size);
+  // })
 
   document.getElementById("borrador").addEventListener("click", function(event) {
     canvas.style.cursor = "url('img/borradorCursor.jpg'), default";
@@ -118,7 +104,6 @@ function paint() {
   })
 
   document.getElementById("Brillo").addEventListener("click", function() {
-    // var f = (e.target.attributes.id.value);
     var imageData = getImgData();
     Brillo(imageData, 50);
     ctx.putImageData(imageData, 0, 0);
@@ -204,8 +189,9 @@ function setSize(s) {size = s;}
 
 
 function hexToRgb(hex) {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)];
+  // var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  console.log("algo");
+  return [parseInt(hex.slice(1,3), 16), parseInt(hex.slice(3,5), 16), parseInt(hex.slice(5,7), 16)];
 }
 
 
