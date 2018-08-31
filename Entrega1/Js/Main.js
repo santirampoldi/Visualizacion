@@ -79,23 +79,11 @@ function paint() {
 
   /*********************************************************************************************************************************************/
 
-  document.getElementById("ByN").addEventListener("click", function() {
-    var imageData = getImgData();
-    blancoYNegro(imageData);
-    ctx.putImageData(imageData, 0, 0);
-  })
+  setEvento('ByN','click',blancoYNegro);
 
-  document.getElementById("Sepia").addEventListener("click", function() {
-    var imageData = getImgData();
-    sepia(imageData);
-    ctx.putImageData(imageData, 0, 0);
-  })
+  setEvento('Sepia','click',sepia);
 
-  document.getElementById("Invertir").addEventListener("click", function() {
-    var imageData = getImgData();
-    invertirColores(imageData);
-    ctx.putImageData(imageData, 0, 0);
-  })
+  setEvento('Invertir','click',invertirColores);
 
   document.getElementById("Bin").addEventListener("click", function() {
     var imageData = getImgData();
@@ -108,6 +96,15 @@ function paint() {
     Brillo(imageData, 50);
     ctx.putImageData(imageData, 0, 0);
   })
+
+  function setEvento(eventoID, listener, callback) {
+      document.getElementById(eventoID).addEventListener(listener, function() {
+          var imageData = getImgData();
+          callback(imageData);
+          ctx.putImageData(imageData, 0, 0);
+      });
+  }
+
 
   /*********************************************************************************************************************************************/
 
@@ -189,8 +186,6 @@ function setSize(s) {size = s;}
 
 
 function hexToRgb(hex) {
-  // var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  console.log("algo");
   return [parseInt(hex.slice(1,3), 16), parseInt(hex.slice(3,5), 16), parseInt(hex.slice(5,7), 16)];
 }
 
