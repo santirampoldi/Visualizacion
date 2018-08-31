@@ -49,7 +49,7 @@ function paint() {
   // })
 
   document.getElementById("borrador").addEventListener("click", function(event) {
-    canvas.style.cursor = "url('img/borradorCursor.jpg'), default";
+    canvas.style.cursor = "url('Img/borradorCursor.jpg'), default";
     color = [255, 255, 255];
     document.getElementById('colores').style.display = 'none';
     offsety = -5;
@@ -57,7 +57,7 @@ function paint() {
   });
 
   document.getElementById("lapiz").addEventListener("click", function(event) {
-    canvas.style.cursor = "url('img/lapizCursor.jpg'), default";
+    canvas.style.cursor = "url('Img/lapizCursor.jpg'), default";
     color = hexToRgb(document.getElementById('colores').value);
     document.getElementById('colores').style.display = 'block';
     offsety = 5;
