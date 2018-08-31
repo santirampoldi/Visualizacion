@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Paint y filtros</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<style type="text/css">
+canvas {
+  border : solid 1px;
+  cursor : url('img/lapizcursor.jpg'), default;
+}
+.herramientas {
+  width: 100px;
+}
+.herramientas div {
+  position: relative;
+  top: 15px;
+}
+.herramientas div:hover{
+  border: solid red 1px;
+  cursor: pointer;
+}
+.herramientas img:hover{
+  border: solid red 1px;
+  cursor: pointer;
+}
+.herramientas a{
+  position: relative;
+  top: 10px;
+}
+.herramientas #reiniciar{
+  position: relative;
+  top: 20px;
+}
+.herramientas input{
+  position: relative;
+  top: 20px;
+}
+.filtros {
+  width: 120px;
+}
+.filtros a{
+  position: relative;
+  top: 10px;
+}
+.filtros img:hover{
+  border: solid red 1px;
+  cursor: pointer;
+}
+</style>
+
+
+<body>
+  <table>
+    <tr>
+      <td>
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+          <div class="btn-group mr-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-secondary">Seleccionar grosor</button>
+            <button type="button" class="btn btn-secondary" onclick="setSize(5);">5</button>
+            <button type="button" class="btn btn-secondary" onclick="setSize(10);">10</button>
+            <button type="button" class="btn btn-secondary" onclick="setSize(20);">20</button>
+            <button type="button" class="btn btn-secondary" onclick="setSize(30);">30</button>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <canvas width="600" height="500" id="canvas"></canvas>
+      </td>
+      <td class="herramientas">
+        <a href="#" id="lapiz"><img src="img/lapiz.jpg" /></a><br/>
+        <a href="#" id="borrador"><img src="img/borrador.jpg" /></a><br/>
+        <!-- <div style="width: 80px; height: 5px;" onclick="setSize(5);"></div><br />
+        <div style="width: 80px; height: 10px;" onclick="setSize(10);"></div><br />
+        <div style="width: 80px; height: 20px;" onclick="setSize(20);"></div><br />
+        <div style="width: 80px; height: 30px;" onclick="setSize(30);"></div><br /> -->
+        <input type="color" id="colores"/><br/>
+        <a href="#" class="btn btn-primary btn-lg active" id="guardarImagen" download="canvas.jpg" role="button" aria-pressed="true">Guardar imagen</a><br/>
+        <button type="button" class="btn btn-primary" download="canvas.jpg" id="reiniciar">Nuevo canvas</button><br/>
+        <input type="file" id="imageFileInput" accept=".jpg, .jpeg, .png" /><br/>
+      </td>
+      <td class="filtros">
+        <img id="ByN" src="img/ByN.jpg" width="120" height="98" />
+        <img id="Sepia" src="img/Sepia.jpg" width="120" height="98" />
+        <img id="Invertir" src="img/Invertir.jpg" width="120" height="98" />
+        <img id="Bin" src="img/Bin.jpg" width="120" height="98" />
+        <img id="Brillo" src="img/Brillo.jpg" width="120" height="98" />
+      </td>
+    </tr>
+  </table>
+
+  <script type="text/javascript" src="js/main.js"></script>
+
+
+</body>
+</html>
