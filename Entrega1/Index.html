@@ -8,47 +8,122 @@
 </head>
 
 <style type="text/css">
+body {
+  /* #FFFF99 */
+  /* rgba(255, 255, 153, 0.7) */
+
+  /* #99FF99 */
+  /* rgba(153, 255, 153, 0.7) */
+
+  background-color: rgba(255, 255, 153, 0.8);
+  color: black;
+  text-shadow: 1px 1px 1px grey;
+}
 canvas {
   border : solid 1px;
-  cursor : url('Img/lapizcursor.jpg'), default;
+  cursor : url('Img/lapizcursor1.png'), default;
 }
 .herramientas {
-  width: 100px;
-}
-.herramientas div {
+  width: 400px;
+  align-items: center;
   position: relative;
-  top: 15px;
+  bottom: 90px;
+  left: 5px;
 }
-.herramientas div:hover{
+.herramientas .container {
+  width: 400px;
+}
+.herramientas img:hover {
   border: solid red 1px;
   cursor: pointer;
 }
-.herramientas img:hover{
-  border: solid red 1px;
-  cursor: pointer;
-}
-.herramientas a{
-  position: relative;
-  top: 10px;
-}
-.herramientas #reiniciar{
+.herramientas a {
   position: relative;
   top: 20px;
 }
-.herramientas input{
+.herramientas #guardarImagen {
   position: relative;
-  top: 20px;
+  top: 40px;
+}
+.herramientas .download {
+  position: relative;
+  top: 40px;
+}
+.herramientas #reiniciar {
+  position: relative;
+  top: 50px;
+  left: 15px;
+}
+.herramientas .nuevoCanvas {
+  position: relative;
+  top: 50px;
+}
+.herramientas input {
+  position: relative;
+  top: 25px;
+}
+.herramientas .color {
+  position: relative;
+  top: 30px;
+}
+.herramientas #colores {
+  top: 35px;
+  left: 10px;
+}
+.herramientas .subirImagen {
+  position: relative;
+  top: 65px;
+}
+.herramientas #imageFileInput {
+  position: relative;
+  top: 80px;
 }
 .filtros {
-  width: 120px;
+  width: 155px;
+  position: relative;
+  left: 20px;
 }
-.filtros a{
+.filtros .container {
+  width: 155px;
+  height: 70px;
+  background-color: #f1f1f1;
+  border: 2px black;
+  border-radius: 3px;
+  box-shadow: 2px 2px 2px black;
+}
+.filtros a {
   position: relative;
   top: 10px;
+  padding-top: 10px;
 }
-.filtros img:hover{
+.filtros img {
+  position: relative;
+  bottom: 20px;
+}
+.filtros label {
+  text-align: center;
+}
+.filtros label,  .filtros input{
+  width: 130px;
+}
+.filtros img:hover {
   border: solid red 1px;
   cursor: pointer;
+}
+.filtrosAvanzados {
+  width: 100px;
+}
+.filtrosAvanzados button {
+  position: relative;
+  bottom: 10px;
+}
+.btn-secondary {
+  padding: 10px 15px;
+  background-color: #f1f1f1;
+}
+.btn-secondary:hover {
+  background-color: #666;
+  color: white;
 }
 </style>
 
@@ -56,42 +131,67 @@ canvas {
 <body>
   <table>
     <tr>
-      <td>
-        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-          <div class="btn-group mr-2" role="group" aria-label="First group">
-            <button type="button" class="btn btn-secondary">Seleccionar grosor</button>
-            <button type="button" class="btn btn-secondary" onclick="setSize(1);">1</button>
+      <td class="herramientas">
+
+        <div class="container">
+          <label for="btn-group">Seleccionar grosor</label>
+          <div class="btn-group mr-2" id="btn-container" role="group" aria-label="First group">
+            <button type="button" class="btn btn-secondary active" onclick="setSize(1);">1</button>
             <button type="button" class="btn btn-secondary" onclick="setSize(5);">5</button>
             <button type="button" class="btn btn-secondary" onclick="setSize(10);">10</button>
             <button type="button" class="btn btn-secondary" onclick="setSize(20);">20</button>
             <button type="button" class="btn btn-secondary" onclick="setSize(30);">30</button>
           </div>
         </div>
+
+        <div class="container">
+          <a href="#" id="lapiz"><img src="Img/lapiz.jpg" /></a>
+          <a href="#" id="borrador"><img src="Img/borrador.jpg" /></a><br/>
+        </div>
+
+        <div class="container" id="coloresContainer">
+          <label class="color" for="colores">Elegir color de dibujo</label>
+          <input type="color" id="colores"/><br/>
+        </div>
+
+        <div class="container">
+          <label for="btn" class="download">Guardar imagen</label>
+          <a class="glyphicon glyphicon-download-alt btn btn-primary active" id="guardarImagen" download="canvas.jpg" role="button" aria-pressed="true"></a>
+        </div>
+
+        <div class="container">
+          <label for="reiniciar" class="nuevoCanvas">Nuevo canvas</label>
+          <button class="glyphicon glyphicon-repeat btn btn-primary" id="reiniciar"></button><br/>
+        </div>
+
+        <div class="container">
+          <label for="form-control-file" class="subirImagen">Subir una imagen propia:</label>
+          <input type="file" class="form-control-file" id="imageFileInput" accept=".jpg, .jpeg, .png" /><br/>
+        </div>
       </td>
-    </tr>
-    <tr>
+
       <td>
         <canvas width="600" height="500" id="canvas"></canvas>
       </td>
-      <td class="herramientas">
-        <a href="#" id="lapiz"><img src="Img/lapiz.jpg" /></a><br/>
-        <a href="#" id="borrador"><img src="Img/borrador.jpg" /></a><br/>
-        <!-- <div style="width: 80px; height: 5px;" onclick="setSize(5);"></div><br />
-        <div style="width: 80px; height: 10px;" onclick="setSize(10);"></div><br />
-        <div style="width: 80px; height: 20px;" onclick="setSize(20);"></div><br />
-        <div style="width: 80px; height: 30px;" onclick="setSize(30);"></div><br /> -->
-        <input type="color" id="colores"/><br/>
-        <a href="#" class="btn btn-primary btn-lg active" id="guardarImagen" download="canvas.jpg" role="button" aria-pressed="true">Guardar imagen</a><br/>
-        <button type="button" class="btn btn-primary" download="canvas.jpg" id="reiniciar">Nuevo canvas</button><br/>
-        <input type="file" id="imageFileInput" accept=".jpg, .jpeg, .png" /><br/>
-      </td>
+
       <td class="filtros">
         <img id="ByN" src="Img/ByN.jpg" width="120" height="98" />
         <img id="Sepia" src="Img/Sepia.jpg" width="120" height="98" />
         <img id="Invertir" src="Img/Invertir.jpg" width="120" height="98" />
         <img id="Bin" src="Img/Bin.jpg" width="120" height="98" />
-        <img id="Brillo" src="Img/Brillo.jpg" width="120" height="98" />
+        <div class="container">
+          <label for="Brillo">Modificar brillo <br/>de la imagen</label>
+          <input type="range" min="-100" max="100" step="2" value="0" id="Brillo" />
+        </div>
       </td>
+
+      <td class="filtrosAvanzados">
+        <button id="Sharpen" type="button" class="btn btn-primary" name="button">Sharpen</button>
+        <button id="Bordes" type="button" class="btn btn-primary" name="button">Bordes</button>
+        <button id="Blur" type="button" class="btn btn-primary" name="button">Blur</button>
+        <button id="Saturacion" type="button" class="btn btn-primary" name="button">Saturacion</button>
+      </td>
+
     </tr>
   </table>
 
