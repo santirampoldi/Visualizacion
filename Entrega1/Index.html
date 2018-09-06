@@ -9,18 +9,14 @@
 
 <style type="text/css">
 body {
-  /* #FFFF99 */
-  /* rgba(255, 255, 153, 0.7) */
-
-  /* #99FF99 */
-  /* rgba(153, 255, 153, 0.7) */
-
   background-color: rgba(255, 255, 153, 0.8);
   color: black;
   text-shadow: 1px 1px 1px grey;
+  /* position: relative; */
 }
 canvas {
-  border : solid 1px;
+  border : solid 2px;
+  border-style: outset;
   cursor : url('Img/lapizcursor1.png'), default;
 }
 .herramientas {
@@ -52,7 +48,7 @@ canvas {
 .herramientas #reiniciar {
   position: relative;
   top: 50px;
-  left: 15px;
+  left: 12px;
 }
 .herramientas .nuevoCanvas {
   position: relative;
@@ -91,6 +87,9 @@ canvas {
   border-radius: 3px;
   box-shadow: 2px 2px 2px black;
 }
+.filtros .imagenes {
+  width: 150px;
+}
 .filtros a {
   position: relative;
   top: 10px;
@@ -103,7 +102,7 @@ canvas {
 .filtros label {
   text-align: center;
 }
-.filtros label,  .filtros input{
+.filtros label, .filtros input{
   width: 130px;
 }
 .filtros img:hover {
@@ -113,9 +112,25 @@ canvas {
 .filtrosAvanzados {
   width: 100px;
 }
+.filtrosAvanzados .container {
+  position: relative;
+  width: 120px;
+  height: 40px;
+  right: 3px;
+}
+.filtrosAvanzados p {
+  position: relative;
+  text-align: center;
+  font-size: 18px;
+  bottom: 25px;
+  left: 3px;
+}
 .filtrosAvanzados button {
   position: relative;
   bottom: 10px;
+  width: 95px;
+  height: 35px;
+  text-align: center;
 }
 .btn-secondary {
   padding: 10px 15px;
@@ -175,21 +190,24 @@ canvas {
       </td>
 
       <td class="filtros">
-        <img id="ByN" src="Img/ByN.jpg" width="120" height="98" />
-        <img id="Sepia" src="Img/Sepia.jpg" width="120" height="98" />
-        <img id="Invertir" src="Img/Invertir.jpg" width="120" height="98" />
-        <img id="Bin" src="Img/Bin.jpg" width="120" height="98" />
+        <div class="imagenes">
+          <img id="ByN" src="Img/ByN.png" width="120" height="98" />
+          <img id="Sepia" src="Img/Sepia.png" width="120" height="98" />
+          <img id="Invertir" src="Img/Invertir.png" width="120" height="98" />
+          <img id="Bin" src="Img/Bin.png" width="120" height="98" />
+        </div>
         <div class="container">
-          <label for="Brillo">Modificar brillo <br/>de la imagen</label>
+          <label for="Brillo">Modificar brillo <br/> de la imagen</label>
           <input type="range" min="-100" max="100" step="2" value="0" id="Brillo" />
         </div>
       </td>
 
       <td class="filtrosAvanzados">
-        <button id="Sharpen" type="button" class="btn btn-primary" name="button">Sharpen</button>
-        <button id="Bordes" type="button" class="btn btn-primary" name="button">Bordes</button>
-        <button id="Blur" type="button" class="btn btn-primary" name="button">Blur</button>
-        <button id="Saturacion" type="button" class="btn btn-primary" name="button">Saturacion</button>
+        <div class="container"><p>Filtros avanzados</p></div>
+        <div class="container"><button id="Sharpen" type="button" class="btn btn-primary" name="button">Sharpen</button></div>
+        <div class="container"><button id="Bordes" type="button" class="btn btn-primary" name="button">Bordes</button></div>
+        <div class="container"><button id="Blur" type="button" class="btn btn-primary" name="button">Blur</button></div>
+        <div class="container"><button id="Saturacion" type="button" class="btn btn-primary" name="button">Saturacion</button></div>
       </td>
 
     </tr>

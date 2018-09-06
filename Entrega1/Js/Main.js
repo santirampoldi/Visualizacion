@@ -2,20 +2,17 @@ var color = [0, 0, 0];
 var px = -1;
 var size = 1;
 var offsety = 0;
+var esBrillo = false;
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var imageDataOriginal;
 
 paint();
 
-document.getElementById('imageFileInput').addEventListener('change', function(event) {
-  handleImage(event);
-});
 
 function paint() {
   clear(getImgData());
   assignButtons();
-
 
   /*********************************************************************************************************************************************/
 
@@ -55,7 +52,7 @@ function paint() {
     document.getElementById('coloresContainer').style.display = 'none';
     offsety = 30;
   });
-
+  
   document.getElementById("lapiz").addEventListener("click", function(event) {
     canvas.style.cursor = "url('Img/lapizcursor1.png'), default";
     ctx.lineCap = "round";
@@ -76,6 +73,10 @@ function paint() {
   document.getElementById("reiniciar").addEventListener("click", function() {
     clear(getImgData());
   })
+
+  document.getElementById('imageFileInput').addEventListener('change', function(event) {
+    handleImage(event);
+  });
 
   /*********************************************************************************************************************************************/
 
@@ -112,11 +113,21 @@ function paint() {
     ctx.putImageData(imageData, 0, 0);
   })
 
-  document.getElementById("Brillo").addEventListener("change", function(event) {
-    var imageData = getImgData();
-    var value = event.target.value;
-    brillo(imageData, value);
-    ctx.putImageData(imageData, 0, 0);
+  document.getElementById("Brillo").addEventListener("mousemove", function(event) {
+    if (esBrillo) {
+      var imageData = getImgData();
+      var value = event.target.value;
+      brillo(imageData, value);
+      ctx.putImageData(imageData, 0, 0);
+    }
+  })
+
+  document.getElementById("Brillo").addEventListener("mousedown", function(event) {
+    esBrillo = true;
+  })
+
+  document.getElementById("Brillo").addEventListener("mouseup", function(event) {
+    esBrillo = false;
   })
 
   function setEvento(eventoID, listener, callback) {
@@ -127,7 +138,6 @@ function paint() {
       guardarCambios();
     });
   }
-
 
   /*********************************************************************************************************************************************/
 
