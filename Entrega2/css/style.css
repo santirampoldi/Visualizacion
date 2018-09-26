@@ -1,0 +1,76 @@
+*{
+  margin: 0 0;
+  padding: 0 0;
+}
+
+body{
+  background-image: url("img/bodyBackground.jpg");
+  /* background-color: rgba(255, 255, 153, 0.8); */
+  text-align: center;
+  /* color: black; */
+  /* text-shadow: 1px 1px 1px grey; */
+}
+
+/* canvas{
+border : solid 3px;
+border-style: outset;
+cursor : url('img/cursor.png'), default;
+} */
+
+h1{
+  font-size: 4em;
+  text-shadow: 3px 3px #ffeead;
+  color: #3b3a30;
+}
+
+h2{
+  text-shadow: 1px 1px 15px #ffeecc;
+}
+
+#matchResult{
+  font-size: 4em;
+  color: #a154ff;
+  text-shadow: 3px 0 0 #fff, -3px 0 0 #fff, 0 3px 0 #fff, 0 -3px 0 #fff, 2px 2px #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+}
+
+.container{
+  margin-top: 1px;
+  min-width: 1130px;
+  min-height: 610px;
+  width: 1130px;
+  height: 610px;
+  background-image: url("img/containerBackground.jpg");
+  border-radius: 20px;
+  box-shadow: 0 5px 20px 10px #000;
+}
+
+#player1, #player2{
+  text-transform: capitalize;
+}
+
+#player1{
+  color: blue;
+}
+
+#player2{
+  color: red;
+}
+
+.onTurn{
+  box-shadow: 0 2px 8px 4px #ffeead;
+  border-radius: 8px;
+  background-color: #ffeecc;
+}
+
+.playerName{
+  padding-right: 0;
+}
+
+.buttonName{
+  padding-left: 0;
+}
+
+.btn-purple{
+  background-color: #8154ff;
+  color: #ffffee;
+}
