@@ -358,7 +358,7 @@ class Game {
       let ctx = canvas.getContext('2d');
       ctx.beginPath();
       ctx.globalCompositeOperation = "destination-out";
-      ctx.arc(token.X + token.radius, token.Y + token.radius + 1, token.radius, 0, Math.PI * 2);
+      ctx.arc(token.X + token.radius, token.Y + token.radius + 1, token.radius + 1, 0, Math.PI * 2);
       ctx.fill();
       // ctx.closePath();
       ctx.globalCompositeOperation = "source-over";
