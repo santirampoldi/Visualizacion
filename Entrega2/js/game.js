@@ -9,8 +9,9 @@ class Game {
   }
 
   setPlayers(name1, name2) {
-    player1.setName(name1);
-    player2 .setName(name2);
+    this.player1.setName(name1);
+    this.player2.setName(name2);
+    this.showPlayersNames();
   }
 
   gameOver() { return this.gameOver; }
@@ -31,7 +32,7 @@ class Game {
 
   reset() {
     let canvas = document.getElementById('canvas');
-    canvas.style.cursor = 'url("img/cursor.png") 30 0, default';
+    canvas.style.cursor = 'url("images/cursor.png") 20 0, default';
     this.img.src = canvas.toDataURL();
     this.showPlayersNames();
     this.gameOver = false;
@@ -41,6 +42,8 @@ class Game {
     this.player2.reset();
     this.prepareTokens(canvas, 1);
     this.prepareTokens(canvas, 2);
+    this.player1.switchOnTurn();
+    this.playerOnTurn = this.player1;
     this.showPlayerOnTurn();
   }
 
@@ -94,7 +97,7 @@ class Game {
   }
 
   createToken(posX, posY, player) {
-    let src = player == 1 ? "img/blueToken.png" : "img/redToken.png";
+    let src = player == 1 ? "images/blueToken.png" : "images/redToken.png";
     let args = {
       'posX': posX,
       'posY': posY,
@@ -140,7 +143,7 @@ class Game {
         this.returnToken(token);
       }
       let canvas = document.getElementById('canvas');
-      canvas.style.cursor = 'url("img/cursor.png") 30 0, default';
+      canvas.style.cursor = 'url("images/cursor.png") 20 0, default';
     }
   }
 
@@ -182,209 +185,201 @@ class Game {
   }
 
   isGameOver(result) {
-    let sinFichas = (this.player1.getTokens().length == 0 && this.player2.getTokens().length == 0);
-    if(sinFichas || result.gameOver) {
-      if(sinFichas) {
-        document.getElementById("matchResult").innerHTML = 'DRAW!!!';
+    let emptyTokens = (this.player1.getTokens().length == 0 && this.player2.getTokens().length == 0);
+    if(emptyTokens || result.gameOver) {
+      if(emptyTokens) {
+        document.getElementById("matchResult").innerHTML = "<h1>" + winnerPlayer + 'DRAW' + "</h1>";
       }
       else {
         let winnerPlayer = result.player == 1 ? this.player1.getData().name : this.player2.getData().name;
-        document.getElementById("matchResult").innerHTML = winnerPlayer + ' WINS!!!';
+        document.getElementById("matchResult").innerHTML = "<h1>" + winnerPlayer + ' WINS' + "</h1>";
       }
-
-      setTimeout(function(){ document.getElementById("matchResult").innerHTML = ''; }, 3000);
       this.gameOver = true;
       let thisObj = this;
-      setTimeout(function() { thisObj.start(); }, 3000);
+      setTimeout(function() {
+        document.getElementById("matchResult").innerHTML = '';
+        thisObj.start(); }, 5000);
+      }
     }
-  }
 
-  isValidPlay(event, token) {
-    let mouseX = event.layerX - event.currentTarget.offsetLeft;
-    let mouseY = event.layerY - event.currentTarget.offsetTop;
+    isValidPlay(event, token) {
+      let mouseX = event.layerX - event.currentTarget.offsetLeft;
+      let mouseY = event.layerY - event.currentTarget.offsetTop;
 
-    let canvas = document.getElementById('canvas');
-    let radius = token.getData().radius;
-    let marginLeft = (canvas.width / 4) + 4;
-    let marginRight = (canvas.width - marginLeft) - 4;
-    let marginTop = 84; //canvas.height - "boardImage.height"
+      let canvas = document.getElementById('canvas');
+      let radius = token.getData().radius;
+      let marginLeft = canvas.width / 4 + 4;
+      let marginRight = canvas.width - marginLeft;
+      let marginTop = 100;
 
-    let posToken = this.playerOnTurn.getPlayedPosition(event, token, this.board);
+      let posToken = this.playerOnTurn.getPlayedPosition(event, token, this.board);
 
-    return (this.between(mouseX, marginLeft, marginRight) && this.between(mouseY, 0, marginTop) && (posToken.x != -1) && (posToken.y != -1));
-  }
+      return (this.between(mouseX, marginLeft, marginRight) && this.between(mouseY, 0, marginTop) && (posToken.x != -1) && (posToken.y != -1));
+    }
 
-  checkMove(token, posToken) {
-    let result = this.checkHorizontal(token, posToken);
-    if(!result.gameOver) {
-      result = this.checkVertical(token, posToken);
+    checkMove(token, posToken) {
+      let result = this.checkHorizontal(token, posToken);
       if(!result.gameOver) {
-        result = this.checkDiagonals(token, posToken);
+        result = this.checkVertical(token, posToken);
+        if(!result.gameOver) {
+          result = this.checkDiagonals(token, posToken);
+        }
+      }
+      return result;
+    }
+
+    checkHorizontal(token, posToken) {
+      let xAux = posToken.x;
+      let count = 0;
+      let row = this.board[posToken.y];
+      for (var i = 0; i < row.length; i++) {
+        if (row[i].token != 0 && row[i].token.id == token.id) {
+          count++;
+        }
+        else {
+          count = 0;
+        }
+        if (count == 4) {
+          return {gameOver:true, player:token.id};
+        }
+      }
+      return {gameOver:false};
+    }
+
+    checkVertical(token, posToken) {
+      let yAux = posToken.y;
+      let count = 0;
+      let col = posToken.x;
+      for (var i = 0; i < 6; i++) {
+        if (this.board[i][col].token != 0 && this.board[i][col].token.id == token.id) {
+          count++;
+        }
+        else {
+          count = 0;
+        }
+        if (count == 4) {
+          return {gameOver:true, player:token.id};
+        }
+      }
+      return {gameOver:false};
+    }
+
+    checkDiagonals(token, posTokenPlayed){
+      let result = this.checkMainDiagonal(token, posTokenPlayed);
+      if(!result.gameOver){
+        result = this.checkSecondaryDiagonal(token, posTokenPlayed);
+      }
+      return result;
+    }
+
+    checkMainDiagonal(token, posToken) {
+      let count = 1;
+
+      if((posToken.y <= 2 && posToken.x <= 3 + posToken.y) || (posToken.y >= 3 && posToken.x > 0 + posToken.y % 3)) {
+        let auxX = posToken.x;
+        let auxY = posToken.y;
+        while(this.isOnBoard(auxX-1, auxY-1) && (this.board[auxY-1][auxX-1].token.id == token.id)) {
+          count++;
+          auxX--;
+          auxY--;
+        }
+        auxX = posToken.x;
+        auxY = posToken.y;
+        while(this.isOnBoard(auxX+1, auxY+1) && (this.board[auxY+1][auxX+1].token.id == token.id)) {
+          count++;
+          auxX++;
+          auxY++;
+        }
+      }
+      return this.isFourInARow(count) ? {gameOver:true, player:token.id} : {gameOver:false};
+    }
+
+    checkSecondaryDiagonal(token, posToken) {
+      let count = 1;
+
+      if((posToken.y <= 2 && posToken.x >= (3 - posToken.y)) || (posToken.y >= 3 && posToken.x < ((this.board.length) - (posToken.y % 3)))) {
+        let auxX = posToken.x;
+        let auxY = posToken.y;
+        while(this.isOnBoard(auxX+1, auxY-1) && (this.board[auxY-1][auxX+1].token.id == token.id)) {
+          count++;
+          auxX++;
+          auxY--;
+        }
+        auxX = posToken.x;
+        auxY = posToken.y;
+        while(this.isOnBoard(auxX-1, auxY+1) && (this.board[auxY+1][auxX-1].token.id == token.id)) {
+          count++;
+          auxX--;
+          auxY++;
+        }
+      }
+      return this.isFourInARow(count) ? {gameOver:true, player:token.id} : {gameOver:false};
+    }
+
+    isFourInARow(c) {
+      if(c >= 4) { return true; }
+      else { return false; }
+    }
+
+    drawBoard() {
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+      let img = new Image();
+      img.src = "images/board.png";
+      img.onload = function() {
+        let posX = (canvas.width / 3.23);
+        let posY = canvas.height - img.height;
+        ctx.clearRect(posX, posY, img.width, img.height);
+        ctx.drawImage(this, posX, posY);
       }
     }
-    return result;
-  }
 
-  checkHorizontal(token, posToken) {
-    let xAux = posToken.x;
-    let count = 0;
-    let row = this.board[posToken.y];
-    for (var i = 0; i < row.length; i++) {
-      if (row[i].token != 0 && row[i].token.id == token.id) {
-        count++;
-      }
-      else {
-        count = 0;
-      }
-      if (count == 4) {
-        break;
+    drawToken(token) {
+      let ctx = document.getElementById('canvas').getContext('2d');
+      let img = new Image();
+      img.src = token.src;
+      img.onload = function() {
+        ctx.drawImage(img, token.X, token.Y);
       }
     }
-    return this.isFourInARow(count) ? {gameOver:true, player:token.id} : {gameOver:false};
-  }
 
-  checkVertical(token, posToken) {
-    let yAux = posToken.y;
-    let count = 0;
-    let col = posToken.x;
-    for (var i = 0; i < 7; i++) {
-      if (this.board[i][col].token != 0 && this.board[i][col].token.id == token.id) {
-        count++;
-      }
-      else {
-        count = 0;
-      }
-      if (count == 4) {
-        break;
-      }
-    }
-    return this.isFourInARow(count) ? {gameOver:true, player:token.id} : {gameOver:false};
-  }
-
-  checkMainDiagonal(token, posToken) {
-    let middleTop = 2;
-    let middleBottom = 3;
-    let middleX = 3;
-
-    let posX = posToken.x;
-    let posY = posToken.y;
-    let count = 1;
-    if((posY <= middleTop && posX <= (middleX + posY)) || (posY >= middleBottom && posX > (0 + (posY % 3)))) {
-      let auxX = posX;
-      let auxY = posY;
-      while(this.isOnBoard(auxX-1, auxY-1) && (this.board[auxY-1][auxX-1].token.id == token.id)) {
-        count++;
-        auxX--;
-        auxY--;
-      }
-      auxX = posX;
-      auxY = posY;
-      while(this.isOnBoard(auxX+1, auxY+1) && (this.board[auxY+1][auxX+1].token.id == token.id)) {
-        count++;
-        auxX++;
-        auxY++;
-      }
-    }
-    return this.isFourInARow(count) ? {gameOver:true, player:token.id} : {gameOver:false};
-  }
-
-  checkSecondaryDiagonal(token, posToken) {
-    let middleTop = 2;
-    let middleBottom = 3;
-    let middleX = 3;
-
-    let posX = posToken.x;
-    let posY = posToken.y;
-    let count = 1;
-    if((posY <= middleTop && posX >= (middleX - posY)) || (posY >= middleBottom && posX < ((this.board.length) - (posY % 3)))) {
-      let auxX = posX;
-      let auxY = posY;
-      while(this.isOnBoard(auxX+1, auxY-1) && (this.board[auxY-1][auxX+1].token.id == token.id)) {
-        count++;
-        auxX++;
-        auxY--;
-      }
-      auxX = posX;
-      auxY = posY;
-      while(this.isOnBoard(auxX-1, auxY+1) && (this.board[auxY+1][auxX-1].token.id == token.id)) {
-        count++;
-        auxX--;
-        auxY++;
-      }
-    }
-    return this.isFourInARow(count) ? {gameOver:true, player:token.id} : {gameOver:false};
-  }
-
-  isFourInARow(c) {
-    if(c >= 4) { return true; }
-    else { return false; }
-  }
-
-  drawBoard() {
-    let canvas = document.getElementById('canvas');
-    let ctx = canvas.getContext('2d');
-    let img = new Image();
-    img.src = "img/board.png";
-    img.onload = function() {
-      let posX = (canvas.width / 3.23);
-      let posY = canvas.height - img.height;
-      ctx.clearRect(posX, posY, img.width, img.height);
-      ctx.drawImage(this, posX, posY);
-    }
-  }
-
-  drawToken(token) {
-    let ctx = document.getElementById('canvas').getContext('2d');
-    let img = new Image();
-    img.src = token.src;
-    img.onload = function() {
+    reDrawToken(token) {
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+      let img = new Image();
+      img.src = token.src;
+      ctx.clearRect(0, 0, 1100, 440);
+      ctx.drawImage(this.img, 0, 0);
       ctx.drawImage(img, token.X, token.Y);
     }
+
+    eraseToken(token) {
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.arc(token.X + token.radius, token.Y + token.radius + 1, token.radius, 0, Math.PI * 2);
+      ctx.fill();
+      // ctx.closePath();
+      ctx.globalCompositeOperation = "source-over";
+      this.img.src = canvas.toDataURL();
+    }
+
+    drag(x, y) {
+      let canvas = document.getElementById("canvas");
+      let ctx = canvas.getContext("2d");
+      let datos = this.playerOnTurn.getSelectedToken();
+      let image = new Image();
+      image.src = datos.getData().src;
+      ctx.clearRect(0, 0, 1100, 440);
+      ctx.drawImage(this.img, 0, 0);
+      ctx.drawImage(image, x-35, y-22);
+    }
+
+    between(x, min, max) { return x >= min && x <= max; }
+
+    isOnBoard(posX, posY) {
+      return (posX >= 0 && posX < this.board[0].length) && (posY >= 0 && posY < this.board.length);
+    }
+
   }
-
-  reDrawToken(token) {
-    let canvas = document.getElementById('canvas');
-    let ctx = canvas.getContext('2d');
-    let img = new Image();
-    img.src = token.src;
-    ctx.clearRect(0, 0, 1100, 440);
-    ctx.drawImage(this.img, 0, 0);
-    ctx.drawImage(img, token.X, token.Y);
-  }
-
-  eraseToken(token) {
-    let canvas = document.getElementById('canvas');
-    let ctx = canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.arc(token.X + token.radius, token.Y + token.radius, token.radius + 1, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.globalCompositeOperation = "source-over";
-    this.img.src = canvas.toDataURL();
-  }
-
-  drag(x, y) {
-    let canvas = document.getElementById("canvas");
-    let ctx = canvas.getContext("2d");
-    let datos = this.playerOnTurn.getSelectedToken();
-
-    ctx.clearRect(0, 0, 1100, 440);
-    ctx.drawImage(this.img, 0, 0);
-
-    datos = datos.getData();
-    let args = {posX:x-30, posY:y-30, id:datos.id, src:datos.src};
-    let tokenCopia = new Token(args);
-    let tokenData = tokenCopia.getData();
-    let image = new Image();
-    image.src = tokenData.src;
-    ctx.drawImage(image, tokenData.X, tokenData.Y);
-  }
-
-  between(x, min, max) { return x >= min && x <= max; }
-
-  isOnBoard(posX, posY) {
-    return (posX >= 0 && posX < this.board[0].length) && (posY >= 0 && posY < this.board.length);
-  }
-
-}

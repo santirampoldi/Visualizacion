@@ -13,7 +13,11 @@ class Player {
 
   getSelectedToken() { return this.selectedToken; }
 
-  setName(name) { this.name = name; }
+  setName(name) {
+    if (name != '') {
+      this.name = name;
+    }
+  }
 
   addToken(token) { this.tokens.push(token); }
 
@@ -30,7 +34,7 @@ class Player {
     for (var i = 0; i < this.tokens.length; i++) {
       if (this.tokens[i].clicked(x, y)) {
         token = this.tokens[i];
-         this.tokens = this.tokens.slice(0, i).concat(this.tokens.slice(i+1, this.tokens.length));
+        this.tokens.splice(i,1);
         break;
       }
     }
@@ -50,17 +54,17 @@ class Player {
   }
 
   decideColumn(mouseX, mouseY, token, board) {
-      let r = token.getData().radius;
-      let row = board[0];
+    let r = token.getData().radius;
+    let row = board[0];
 
-      for (var i = 0; i < row.length; i++) {
-        let min = row[i].x - r;
-        let max = row[i].x + r;
-        if (this.between(mouseX, min, max)) {
-          return i;
-        }
+    for (var i = 0; i < row.length; i++) {
+      let min = row[i].x - r;
+      let max = row[i].x + r;
+      if (this.between(mouseX, min, max)) {
+        return i;
       }
-      return -1;
+    }
+    return -1;
   }
 
   decideRow(mouseX, mouseY, token, board, col) {

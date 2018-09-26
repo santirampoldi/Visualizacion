@@ -11,7 +11,7 @@ class Token {
   }
 
   getData() {
-    return {'X':this.X - this.radius, 'Y':this.Y - this.radius, 'radius':this.radius, 'id':this.id, 'src':this.src, 'played':this.played};
+    return {'X':this.X - this.radius, 'Y':this.Y - this.radius, 'radius':this.radius, 'id':this.id, 'src':this.src, 'played':this.played, 'dragging':this.dragging};
   }
 
   play() {
@@ -19,15 +19,11 @@ class Token {
     this.dragging = false;
   }
 
-  undo() {
-    this.played = false;
-  }
+  undo() { this.played = false; }
 
   clicked(mouseX, mouseY) {
     let x = (mouseX - this.X);
     let y = (mouseY - this.Y);
     return Math.sqrt(x*x + y*y) < this.radius;
-    // ? true : false
   }
-  
 }

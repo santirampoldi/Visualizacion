@@ -1,76 +1,55 @@
-*{
-  margin: 0 0;
-  padding: 0 0;
-}
-
-body{
-  background-image: url("img/bodyBackground.jpg");
-  /* background-color: rgba(255, 255, 153, 0.8); */
+body {
+  background-color: #2A1B0A;
   text-align: center;
-  /* color: black; */
-  /* text-shadow: 1px 1px 1px grey; */
+  text-shadow: 2px 2px 2px #3b3a30;
+  font-family: 'Open Sans', sans-serif;
 }
 
-/* canvas{
-border : solid 3px;
-border-style: outset;
-cursor : url('img/cursor.png'), default;
-} */
+canvas {
+  position: relative;
+  top: 5px;
+  border : solid 4px;
+  border-style: outset;
+}
 
-h1{
+h1 {
+  font-size: 65px;
+}
+
+h2 {
+  text-shadow: 1px 1px 1px 3px;
+}
+
+#matchResult {
   font-size: 4em;
-  text-shadow: 3px 3px #ffeead;
-  color: #3b3a30;
+  color: white;
+  font-family: monospace;
+  text-shadow: 1px 1px 2px #FAFAFA;
+  /* text-shadow: 3px 0 0 #FAFAFA, -3px 0 0 #FAFAFA, 0 3px 0 #FAFAFA, 0 -3px 0 #FAFAFA, 2px 2px #FAFAFA, -2px -2px 0 #FAFAFA, 2px -2px 0 #FAFAFA, -2px 2px 0 #FAFAFA; */
 }
 
-h2{
-  text-shadow: 1px 1px 15px #ffeecc;
-}
-
-#matchResult{
-  font-size: 4em;
-  color: #a154ff;
-  text-shadow: 3px 0 0 #fff, -3px 0 0 #fff, 0 3px 0 #fff, 0 -3px 0 #fff, 2px 2px #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
-}
-
-.container{
-  margin-top: 1px;
-  min-width: 1130px;
-  min-height: 610px;
+.container {
   width: 1130px;
-  height: 610px;
-  background-image: url("img/containerBackground.jpg");
-  border-radius: 20px;
-  box-shadow: 0 5px 20px 10px #000;
+  height: 640px;
+  background-image: url("images/containerBackground.jpg");
+  border-radius: 5px;
+  box-shadow: 0 5px 15px 10px #000;
 }
 
-#player1, #player2{
+#player1, #player2, #matchResult {
   text-transform: capitalize;
 }
 
-#player1{
-  color: blue;
+#player1 {
+  color: #1209A1;
 }
 
-#player2{
-  color: red;
+#player2 {
+  color: #FF0000;
 }
 
-.onTurn{
-  box-shadow: 0 2px 8px 4px #ffeead;
+.onTurn {
+  box-shadow: 0 1px 4px 2px #ffeead;
   border-radius: 8px;
-  background-color: #ffeecc;
-}
-
-.playerName{
-  padding-right: 0;
-}
-
-.buttonName{
-  padding-left: 0;
-}
-
-.btn-purple{
-  background-color: #8154ff;
-  color: #ffffee;
+  background-color: #F2F5A9;
 }

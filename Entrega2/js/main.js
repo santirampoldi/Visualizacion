@@ -4,8 +4,6 @@ let p1 = new Player({name:'Player 1', id:1});
 let p2 = new Player({name:'Player 2', id:2});
 let game = new Game({player1: p1, player2: p2});
 
-game.start();
-
 canvas.addEventListener("mousedown", function(event) {
   if (!game.gameOver) {
     game.selectToken(event);
@@ -35,8 +33,9 @@ canvas.addEventListener("mouseleave", function(event) {
   }
 });
 
-// document.getElementById("start").addEventListener("click", function(){
-//   let name1 = document.getElementById("nameP1").value;
-//   let name2 = document.getElementById("nameP2").value;
-//   game.setPlayers(name1, name2);
-// });
+document.getElementById("start").addEventListener("click", function(event){
+  let name1 = document.getElementById("nameP1").value;
+  let name2 = document.getElementById("nameP2").value;
+  game.setPlayers(name1, name2);
+  game.start();
+});
