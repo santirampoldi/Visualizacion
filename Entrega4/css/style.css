@@ -1,0 +1,135 @@
+* {
+  margin: 0 0;
+  padding: 0 0;
+  color: white;
+}
+
+body, .breadcrumb {
+  background-color: #021A32;
+  font-family: 'Open Sans', sans-serif;
+}
+
+nav {
+  font-size: 2em;
+  font-family: 'Lustria', serif;
+}
+
+nav .title {
+  font-size: 1.2em;
+}
+
+.container {
+  width: 1000px;
+  padding: 0 0;
+}
+
+.navbar-color a {
+  color: white;
+}
+
+.gameContainer {
+  width: 100%;
+  height: 530px;
+  background-color: #010F1C;
+}
+
+.userInfo {
+  position: relative;
+  left: 65%;
+}
+
+/* #start {
+background-color: #deab4a;
+color: #0a152f;
+}
+
+#start:hover {
+background-color: #0a152f;
+color: #f5c66e;
+animation: pulse 0.3s;
+box-shadow: 0 0 1em 0.2em #f5c66e;
+}
+
+#start:active {
+animation: scaleSize 0.1s;
+}
+
+@keyframes pulse {
+0% {
+box-shadow: 0 0 0 0;
+}
+}
+
+@keyframes scaleSize {
+from {
+transform: scale(1);
+}
+
+to {
+transform: scale(0.8);
+}
+} */
+
+
+.board {
+  float: right;
+  width: 300px;
+  height: 100%;
+}
+
+.card {
+  background-color: #0A152F;
+  border: none;
+  color: #B7B7B7;
+  margin-top: 10px;
+}
+
+.high-score {
+  height: 50px;
+}
+
+.score {
+  height: 50px;
+}
+
+.card-header {
+  border: none;
+  border-top: 1px dashed #20325c;
+}
+
+.volume{
+  height: 50px;
+}
+
+.form-group{
+  margin-left: 20px;
+}
+
+.boton{
+  height: 25px;
+}
+
+#game {
+  position: absolute;
+  overflow: hidden;
+  float: left;
+  width: 640px;
+  height: 100%;
+  background-image: url("../images/background2.png"), url("../images/background1.png");
+  animation: animate linear 8s infinite;
+  /* z-index:1 */
+  /* background-size: cover; */
+  background-size: auto, auto;
+  background-repeat: repeat, repeat;
+  /* background-repeat: repeat-y 0 0, repeat-y 0 0; */
+  background-position: 0px 0px, 0px 0px;
+}
+
+@keyframes animate {
+  from {
+    background-position: 0px 0px, 0px 0px;
+  }
+  to {
+    background-position: 0px 1590px, 0px 3180px;
+  }
+}
