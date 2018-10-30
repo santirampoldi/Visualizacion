@@ -19,8 +19,9 @@ nav .title {
 }
 
 .container {
-  width: 1000px;
-  padding: 0 0;
+  position: absolute;
+  right: 14%;
+  width: 1100px;
 }
 
 .navbar-color a {
@@ -28,7 +29,7 @@ nav .title {
 }
 
 .gameContainer {
-  width: 100%;
+  width: 1180px;
   height: 530px;
   background-color: #010F1C;
 }
@@ -38,75 +39,71 @@ nav .title {
   left: 65%;
 }
 
-/* #start {
-background-color: #deab4a;
-color: #0a152f;
-}
-
-#start:hover {
-background-color: #0a152f;
-color: #f5c66e;
-animation: pulse 0.3s;
-box-shadow: 0 0 1em 0.2em #f5c66e;
-}
-
-#start:active {
-animation: scaleSize 0.1s;
-}
-
-@keyframes pulse {
-0% {
-box-shadow: 0 0 0 0;
-}
-}
-
-@keyframes scaleSize {
-from {
-transform: scale(1);
-}
-
-to {
-transform: scale(0.8);
-}
-} */
-
-
 .board {
+  position: absolute;
   float: right;
-  width: 300px;
+  width: 250px;
   height: 100%;
+  right: 17%;
+}
+
+.ranking-container {
+  background-color: red;
+  width: 270px;
+  height: 530px;
+  float: right;
+}
+
+.ranking-title {
+  float: right;
+  position: absolute;
+  right: -2.5%;
+  top: 3%;
+}
+
+.ranking-title h4 {
+  font-size: 2.3em;
+}
+
+.ranking {
+  position: absolute;
+  width: 200px;
+  height: 420px;
+  top: 15%;
+  left: 87.3%;
+  border: solid 2px black;
+  border-radius: 5px;
+  background-color: green;
+  float: right;
 }
 
 .card {
-  background-color: #0A152F;
+  background-color: #010F1C;
   border: none;
-  color: #B7B7B7;
-  margin-top: 10px;
-}
-
-.high-score {
-  height: 50px;
-}
-
-.score {
-  height: 50px;
 }
 
 .card-header {
   border: none;
-  border-top: 1px dashed #20325c;
 }
 
-.volume{
+.high-score {
+  height: 70px;
+}
+
+.score {
+  height: 80px;
+}
+
+.volume {
   height: 50px;
 }
 
-.form-group{
+.form-group {
   margin-left: 20px;
 }
 
-.boton{
-  height: 25px;
+.boton {
+  height: 20px;
 }
 
 #game {
@@ -116,20 +113,31 @@ transform: scale(0.8);
   width: 640px;
   height: 100%;
   background-image: url("../images/background2.png"), url("../images/background1.png");
-  animation: animate linear 8s infinite;
-  /* z-index:1 */
-  /* background-size: cover; */
   background-size: auto, auto;
   background-repeat: repeat, repeat;
-  /* background-repeat: repeat-y 0 0, repeat-y 0 0; */
   background-position: 0px 0px, 0px 0px;
 }
 
-@keyframes animate {
+.gameStarted {
+  animation: background-animation linear 8s infinite;
+}
+
+@keyframes background-animation {
   from {
     background-position: 0px 0px, 0px 0px;
   }
   to {
     background-position: 0px 1590px, 0px 3180px;
   }
+}
+
+.spaceship {
+  position: absolute;
+  width: 70px;
+  height: 90px;
+  background-image: url("../images/player.png");
+  background-size: auto;
+  background-repeat: no-repeat;
+  bottom: 40px;
+  left: 250px;
 }
