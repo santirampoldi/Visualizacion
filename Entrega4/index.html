@@ -16,7 +16,7 @@
           <a class="title" href="#">TUDAI GAMES</a>
           <ul class="navbar-nav my-2 my-lg-0 userInfo">
             <li class="nav-item">
-              <a class="nav-link" href="#"> John Doe <img src="images/userIcon.png" alt="User Icon" height="70px" weight="70px"></a>
+              <a class="nav-link" href="#"> John Doe <img src="images/userIcon.png" alt="User Icon" height="70px" width="70px"></a>
             </li>
           </ul>
         </nav>
@@ -45,11 +45,8 @@
             </div>
             <div class="card volume">
               <div class="card-body d-flex justify-content-center">
-                <h5 class="card-title">Volumen <span id="vol"> 5</span></h5>
-                <div class="form-group">
-                  <button id="down" type="button" class="btn btn-secondary btn-sm boton">-</button>
-                  <button id="up" type="button" class="btn btn-primary btn-sm boton">+</button>
-                </div>
+                <label id="volumeLabel" for="Volume">Volume</label>
+                <input type="range" min="0" max="100" step="2" value="20" id="volume" />
               </div>
             </div>
             <div class="card controls">
@@ -57,16 +54,21 @@
                 <h1 class="card-title">Controles</h1>
               </div>
               <div class="card-body d-flex justify-content-center">
-                <!-- <img src="images/controls.png" class="card-text" alt="controles/flechas direccionales"> -->
+                <p class="instructions">Utiliza las flechas del teclado para moverte por la pantalla. Esquiva los obstaculos y recoge los power-ups</p>
+              </div>
+            </div>
+            <div class="card config">
+              <div class="card-body d-flex justify-content-center">
+                <button type="button" class="" id="config">Configuración</button>
               </div>
             </div>
           </div>
-          <div class="ranking-container">
+          <div class="ranking-container justify-content-center">
             <div class="ranking-title d-flex justify-content-center">
               <h4>Ranking</h4>
             </div>
             <div class="ranking">
-              
+
             </div>
           </div>
         </div>

@@ -15,35 +15,29 @@ class gameObject {
     this.interval = [];
   }
 
+
   calculatePos() {
     let rect;
-    if (this.player == "spaceship") {
-      rect = document.getElementById("spaceship").getBoundingClientRect();
-    }
-    else if(this.player == "enemy") {
-      let id = "enemy" + this.id;
-      let elem = document.getElementById(id);
-      if(elem) {
-        rect = elem.getBoundingClientRect();
-      }
+    let data = {};
+
+    let elem = document.getElementById(this.player);
+    if(elem) {
+      rect = elem.getBoundingClientRect();
+
+      data.top = rect.top;
+      data.bottom = rect.bottom;
+      data.left = rect.left;
+      data.right = rect.right;
     }
 
-    if (rect) {
-      this.top = rect.top;
-      this.bottom = rect.bottom;
-      this.left = rect.left;
-      this.right = rect.right;
-    }
+    return data;
   }
 
   setPos(x, y) {
-    let css = document.getElementById(this.player).style;
-    css.left = x;
-    css.bottom = y;
-  }
-
-  setPosEnemy(x, y) {
-    let id = this.player + this.id;
+    let id = this.player;
+    if (this.player == "enemy") {
+      id += this.id;
+    }
     let css = document.getElementById(id).style;
     css.left = x;
     css.bottom = y;
