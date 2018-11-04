@@ -15,37 +15,79 @@ class Game {
       num: 0,
       htmlDOM: '<div id="spaceship" class="spaceship"></div>'
     });
-    this.factorMovimiento = 8;
     this.keyCodes = {
       left: 37,
       up: 38,
       right: 39,
       down: 40
     }
+    this.usedEnemies = [];
+    this.usableEnemies = [];
+    this.powerUpList = [];
     this.keys = [];
+    this.factorMovimiento = 8;
     this.start = false;
+    this.deleteIntervals();
     this.intervals = [];
     this.score = 0;
-    this.setEvents();
     this.enemyCount = 0;
+    this.powerUpCount = 0;
+    this.powerUp = "";
     this.volume = false; //True IF is being modified
     this.music = new Audio("audio/music.mp3");
-    this.music.volume = 0.2;
+    this.music.volume = 0;
     this.music.loop = true;
   }
 
   setEvents() {
     let thisClass = this;
 
-    document.addEventListener("keydown", function (e) {
+    $(document).on("keydown", function(e) {
       if (thisClass.start) {
         thisClass.keys[e.keyCode] = true;
+
+        let el = document.getElementById("spaceship");
+        if (el) {
+          let elem = el.classList;
+          if (thisClass.keys[thisClass.keyCodes.left]) {
+            if (elem.contains("right")) {
+
+              elem.remove("right");
+            }
+            if (elem.contains("left")) {
+              elem.remove("left");
+            }
+            elem.add("left");
+          }
+          else if (thisClass.keys[thisClass.keyCodes.right]) {
+            if (elem.contains("right")) {
+              elem.remove("right");
+            }
+            if (elem.contains("left")) {
+              elem.remove("left");
+            }
+            elem.add("right");
+          }
+        }
       }
     });
 
     document.addEventListener("keyup", function (e) {
       if (thisClass.start) {
         thisClass.keys[e.keyCode] = false;
+
+        let el = document.getElementById("spaceship");
+        if (el) {
+          let elem = el.classList;
+          if (thisClass.start) {
+            if (elem.contains("right")) {
+              elem.remove("right");
+            }
+            if (elem.contains("left")) {
+              elem.remove("left");
+            }
+          }
+        }
       }
     });
 
@@ -65,12 +107,17 @@ class Game {
     })
   }
 
+  deleteEvents() {
+    $(document).unbind("keydown");
+    $(document).unbind("keyup");
+    $("#volume").unbind();
+  }
+
   startGame() {
     this.clear();
     document.getElementById("game").classList.add("gameStarted");
     this.start = true;
-    this.startPlayer();
-    this.spawnEnemy();
+    this.update();
     this.music.play();
 
     document.getElementById("spaceship").addEventListener("animationend", () => {
@@ -89,14 +136,23 @@ class Game {
       gameOver.remove();
     }
     this.start = false;
+    this.usedEnemies = [];
+    this.usableEnemies = [];
+    this.powerUpList = [];
     this.keys = [];
+    // this.intervals = [];
     this.score = 0;
     this.enemyCount = 0;
+    this.powerUpCount = 0;
+    this.powerUp = "";
     document.getElementById("score").innerHTML = 0;
     document.getElementById("game").classList.remove("gameStarted");
+    this.deleteEvents();
+    this.setEvents();
+    this.deleteIntervals();
 
     $("#spaceship").remove();
-    $(".enemy").remove();
+    $("div").remove(".enemy");
     this.music.pause();
     this.music.currentTime = 0;
 
@@ -108,33 +164,63 @@ class Game {
       htmlDOM: '<div id="spaceship" class="spaceship"></div>'
     });
 
-    for (let i = 0; i < this.intervals.length; i++) {
-      clearInterval(this.intervals[i]);
+  }
+
+  deleteIntervals() {
+    if (this.intervals) {
+      // console.log(this.intervals.length); //Llega aca con size = 0
+      for (let i = 0; i < this.intervals.length; i++) {
+        // console.log("borrando intervalo:" + this.intervals[i]);
+        clearInterval(this.intervals[i]);
+      }
+      this.intervals = [];
+      // console.log(this.intervals.length);
     }
-    this.intervals = [];
   }
 
   setVolume(value) {
     this.music.volume = (value/100);
   }
 
-  detectCollision(enemy) {
+  detectCollision(object) {
     let playerData = this.spaceship.calculatePos();
-    let rect = enemy.getBoundingClientRect();
+    let lista = ""
 
-    let enemyData = {
-      top: rect.top,
-      bottom: rect.bottom,
-      left: rect.left,
-      right: rect.right
+    if (object == "enemy") {
+      lista = this.usedEnemies;
+    }
+    else {
+      lista = this.powerUpList;
     }
 
-    let cond1 = this.between(playerData.left, playerData.right, enemyData.left, enemyData.right);
-    let cond2 = this.between(playerData.top, playerData.bottom, enemyData.top, enemyData.bottom);
+    let gameObject = "";
+    let objectId = "";
 
+    for (var i = 0; i < lista.length; i++) {
+      objectId = lista[i].id;
+      gameObject = document.getElementById(object + objectId);
+      if (gameObject) {
+        let rect = gameObject.getBoundingClientRect();
 
-    if (cond1 && cond2) {
-      return true;
+        let gameObjectData = {
+          top: rect.top,
+          bottom: rect.bottom,
+          left: rect.left,
+          right: rect.right
+        }
+
+        let cond1 = this.between(playerData.left, playerData.right, gameObjectData.left, gameObjectData.right);
+        let cond2 = this.between(playerData.top, playerData.bottom, gameObjectData.top, gameObjectData.bottom);
+        let middle = this.calculateMiddle(playerData.left, playerData.right);
+        let cond3 = this.between(middle, middle, gameObjectData.left, gameObjectData.right);
+
+        if ((cond1 && cond2) || (cond2 && cond3)) {
+          if (object == "powerUp") {
+            this.powerUp = object + objectId;
+          }
+          return true;
+        }
+      }
     }
 
     return false;
@@ -145,11 +231,16 @@ class Game {
     return (min <= val1 && val1 <= max) || (min <= val2 && val2 <= max);
   }
 
+  calculateMiddle(left, right) {
+    return left + (right - left) / 2;
+  }
+
   gameOver() {
+    this.deleteIntervals();
     this.start = false;
     this.spaceship.setAnimation("explosion");
     this.setHighScore();
-    // this.explosion.play();
+    this.deleteEvents();
   }
 
   setHighScore() {
@@ -158,7 +249,6 @@ class Game {
       highScore.innerHTML = this.score;
     }
   }
-
 
   generateEnemy() {
     let id = this.enemyCount;
@@ -173,95 +263,160 @@ class Game {
     return enemy;
   }
 
-  spawnEnemy() {
-    if (this.start) {
-      let thisClass = this;
+  generatePowerUp() {
+    let id = this.powerUpCount;
+    this.powerUpCount++;
+    let powerUp = new gameObject({
+      player: "powerUp",
+      w: 54,
+      h: 76,
+      num: id,
+      htmlDOM: '<div class="powerUp" id="powerUp' + id + '"></div>'
+    });
+    return powerUp;
+  }
+
+  update() {
+    let thisClass = this;
+    if (thisClass.start) {
+      let elem = document.getElementById("game");
+      elem.innerHTML += this.spaceship.element;
+      this.spaceship.setPos("250px", "40px");
+
       let interval1 = setInterval(function () {
         if (!thisClass.start) {
+          // console.log("se borra" + interval1);
           clearInterval(interval1);
         }
-        let enemy = thisClass.generateEnemy();
-        $("#game").append(enemy.element);
-        let posX = thisClass.randomBetween(0, 580);
-        enemy.setPos(posX + "px", "400px");
+        let elem = document.getElementById("spaceship").style;
+        let posX = parseInt(elem.left, 10);
+        let posY = parseInt(elem.bottom, 10);
 
-        // let n = thisClass.randomBetween(1, 3);
-        // let animation = "dropEnemy" + n;
-        let animation = "dropEnemy1";
-        enemy.setAnimationEnemy(animation, "enemy");
+        if (thisClass.keys[thisClass.keyCodes.left]) {
+          thisClass.moveLeft(elem, posX, thisClass.factorMovimiento);
+        }
+        else if (thisClass.keys[thisClass.keyCodes.right]) {
+          thisClass.moveRight(elem, posX, thisClass.factorMovimiento);
+        }
 
-        let enemyId = "#enemy" + enemy.id;
+        if (thisClass.keys[thisClass.keyCodes.up]) {
+          thisClass.moveUp(elem, posY, thisClass.factorMovimiento);
+        }
+        else if (thisClass.keys[thisClass.keyCodes.down]) {
+          thisClass.moveDown(elem, posY, thisClass.factorMovimiento);
+        }
 
-        $(enemyId).on("animationstart", function () {
-          let interval2 = setInterval(() => {
-            if (!thisClass.start) {
-              clearInterval(interval2);
-            }
-            if (thisClass.start) {
-              let result = thisClass.detectCollision(this);
-              if (result) {
-                thisClass.gameOver();
-              }
-            }
-          }, 20);
+        let result = thisClass.detectCollision("enemy");
+        if (result) {
+          thisClass.gameOver();
+        }
 
-          thisClass.intervals.unshift(interval2);
-        });
 
-        $(enemyId).on("animationend", function () {
-          enemy.animatedEnd = true;
-          this.remove();
-          if (thisClass.start) {
-            thisClass.score += 100;
-            document.getElementById("score").innerHTML = thisClass.score;
+        if (thisClass.randomBetween(0, 200) <= 1) {     //Spawn rate
+          let enemy = "";
+
+          if (thisClass.usableEnemies.length == 0) {
+            enemy = thisClass.generateEnemy();
+          }
+          else {
+            enemy = thisClass.usableEnemies.shift();
           }
 
-        });
+          $("#game").append(enemy.element);
+          let posX = thisClass.randomBetween(0, 580);
+          enemy.setPos(posX + "px", "400px");
+          thisClass.usedEnemies.unshift(enemy);
 
-      }, 5000);
-      // }, thisClass.randomBetween(1000, 3000));
+          let enemyId = "#enemy" + enemy.id;
+
+          $(enemyId).on("animationend", function () {
+            enemy.animatedEnd = true;
+            let index = thisClass.usedEnemies.indexOf(enemy);
+            if (index > -1) {
+              let e = thisClass.usedEnemies.splice(index, 1)[0];
+              thisClass.usableEnemies.unshift(e);
+            }
+            this.remove();
+            if (thisClass.start) {
+              thisClass.score += 100;
+              document.getElementById("score").innerHTML = thisClass.score;
+            }
+          });
+
+          // let n = thisClass.randomBetween(1, 3);
+          // let animation = "dropObject" + n;
+          let animation = "dropObject1";
+          enemy.setAnimationObject(animation, "enemy");
+          if (thisClass.usedEnemies.includes(enemy)) {
+            document.getElementById("enemy"+enemy.id).classList.add(animation);
+          }
+
+        }
+
+        if (thisClass.randomBetween(0, 200) <= 1) {     //Spawn rate
+          let powerUp = "";
+          powerUp = thisClass.generatePowerUp();
+
+          $("#game").append(powerUp.element);
+          let posX = thisClass.randomBetween(0, 580);
+          powerUp.setPos(posX + "px", "400px");
+
+          let powerUpId = "#powerUp" + powerUp.id;
+
+          thisClass.powerUpList.unshift(powerUp);
+
+          // let n = thisClass.randomBetween(1, 3);
+          // let animation = "dropObject" + n;
+          let animation = "dropObject1";
+          powerUp.setAnimationObject(animation, "powerUp");
+          document.getElementById("powerUp"+powerUp.id).classList.add(animation);
+
+
+          $(powerUpId).on("animationend", function () {
+            powerUp.animatedEnd = true;
+            this.remove();
+          });
+        }
+
+        if (thisClass.detectCollision("powerUp")) {
+          thisClass.score += 500;
+          document.getElementById("score").innerHTML = thisClass.score;
+          thisClass.setVelocidad(12);
+          setTimeout(function() {
+            thisClass.setVelocidad(8);
+          }, 3000);
+          let powerUp = thisClass.powerUp;
+          let powerUpObject = "";
+          for (var i = 0; i < thisClass.powerUpList.length; i++) {
+            if (("powerUp" + thisClass.powerUpList[i].id) == powerUp) {
+              powerUpObject = thisClass.powerUpList[i];
+              break;
+            }
+          }
+          let animation = "reward";
+          powerUpObject.setAnimationObject(animation, "powerUp");
+          document.getElementById("powerUp"+powerUpObject.id).classList.add(animation);
+          thisClass.remove(powerUp);
+        }
+
+      }, 20);
 
       this.intervals.unshift(interval1);
+      // console.log("se añadio" + interval1);
     }
+  }
+
+  remove(objectId) {
+    var element = document.getElementById(objectId);
+    element.parentNode.removeChild(element);
+  }
+
+  setVelocidad(num) {
+    this.factorMovimiento = num;
   }
 
   randomBetween(min, max) {
     return parseInt(Math.random() * (max - min) + min);
-  }
-
-  startPlayer() {
-    if (this.start) {
-      let elem = document.getElementById("game");
-      elem.innerHTML += this.spaceship.element;
-      this.spaceship.setPos("250px", "40px");
-    }
-
-    let thisClass = this;
-
-    let interval3 = setInterval(function () {
-      if (!thisClass.start) {
-        clearInterval(interval3);
-      }
-      let elem = document.getElementById("spaceship").style;
-      let posX = parseInt(elem.left, 10);
-      let posY = parseInt(elem.bottom, 10);
-
-      if (thisClass.keys[thisClass.keyCodes.left]) {
-        thisClass.moveLeft(elem, posX, thisClass.factorMovimiento);
-      }
-      else if (thisClass.keys[thisClass.keyCodes.right]) {
-        thisClass.moveRight(elem, posX, thisClass.factorMovimiento);
-      }
-
-      if (thisClass.keys[thisClass.keyCodes.up]) {
-        thisClass.moveUp(elem, posY, thisClass.factorMovimiento);
-      }
-      else if (thisClass.keys[thisClass.keyCodes.down]) {
-        thisClass.moveDown(elem, posY, thisClass.factorMovimiento);
-      }
-    }, 20);
-
-    this.intervals.unshift(interval3);
   }
 
   moveLeft(elem, posX, factorMovimiento) {

@@ -13,6 +13,7 @@ class gameObject {
     this.right = 0;
     this.animatedEnd = false;
     this.interval = [];
+    this.powerUp = false;
   }
 
 
@@ -35,7 +36,7 @@ class gameObject {
 
   setPos(x, y) {
     let id = this.player;
-    if (this.player == "enemy") {
+    if (this.player == "enemy" || this.player == "powerUp") {
       id += this.id;
     }
     let css = document.getElementById(id).style;
@@ -48,9 +49,15 @@ class gameObject {
     elem.classList.add(animation);
   }
 
-  setAnimationEnemy(animation) {
-    let id = "enemy" + this.id;
+  setAnimationObject(animation, gameObject) {
+    let id = gameObject + this.id;
     let elem = document.getElementById(id);
     elem.classList.add(animation);
   }
+
+  // setAnimationPowerUp(animation) {
+  //   let id = "powerUp" + this.id;
+  //   let elem = document.getElementById(id);
+  //   elem.classList.add(animation);
+  // }
 }

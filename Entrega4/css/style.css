@@ -28,6 +28,11 @@ nav .title {
   color: white;
 }
 
+#logo {
+  position: relative;
+  right: 1%;
+}
+
 .gameContainer {
   width: 1180px;
   height: 530px;
@@ -150,14 +155,16 @@ nav .title {
   float: left;
   width: 640px;
   height: 100%;
-  background-image: url("../images/background2.png"), url("../images/background1.png");
-  /* background-image: url("../images/background3.png"), url("../images/background2.png"), url("../images/background1.png"); */
+
+  /* background-image: url("../images/background2.png"), url("../images/background1.png");
   background-size: auto, auto;
   background-repeat: repeat, repeat;
-  background-position: 0px 0px, 0px 0px;
-  /* background-size: auto, auto, auto;
+  background-position: 0px 0px, 0px 0px; */
+
+  background-image: url("../images/background3.png"), url("../images/background2.png"), url("../images/background1.png");
+  background-size: auto, auto, auto;
   background-repeat: repeat, repeat, repeat;
-  background-position: 0px 0px, 0px 0px, 0px 0px; */
+  background-position: 0px 0px, 0px 0px, 0px 0px;
 }
 
 .gameStarted {
@@ -166,12 +173,12 @@ nav .title {
 
 @keyframes background-animation {
   from {
-    background-position: 0px 0px, 0px 0px;
-    /* background-position: 0px 0px, 0px 0px, 0px 0px; */
+    /* background-position: 0px 0px, 0px 0px; */
+    background-position: 0px 0px, 0px 0px, 0px 0px;
   }
   to {
-    background-position: 0px 1590px, 0px 3180px;
-    /* background-position: 0px 530px, 0px 1590px, 0px 3180px; */
+    /* background-position: 0px 1590px, 0px 3180px; */
+    background-position: 0px 530px, 0px 1590px, 0px 3180px;
   }
 }
 
@@ -195,11 +202,20 @@ nav .title {
   background-repeat: no-repeat;
 }
 
-.dropEnemy1 {
-  animation: dropEnemy1 linear 3s;
+.powerUp {
+  position: absolute;
+  width: 54px;
+  height: 76px;
+  background-image: url("../images/powerUp.png");
+  background-size: auto;
+  background-repeat: no-repeat;
 }
 
-@keyframes dropEnemy1 {
+.dropObject1 {
+  animation: dropObject1 linear 3s;
+}
+
+@keyframes dropObject1 {
   from {
     top: -50px;
   }
@@ -223,5 +239,52 @@ nav .title {
   100% {
     background-position-y: -320px;
     background-position-x: -320px;
+  }
+}
+
+.reward {
+  width: 76px;
+  height: 76px;
+  background: url("../images/reward.png") 0 0;
+  animation: reward 1s steps(6);
+}
+
+@keyframes reward {
+  0% {
+    /* background-position-y: 76px; */
+    background-position-x: 76px;
+  }
+  100% {
+    /* background-position-y: -320px; */
+    background-position-x: -456px;
+  }
+}
+
+.gameOver {
+  font-size: 2em;
+  color: red;
+  font-weight: bold;
+}
+
+
+.left {
+  animation: move-left ease-out 0.2s;
+  animation-fill-mode: forwards;
+}
+
+.right {
+  animation: move-right ease-out 0.2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes move-left {
+  100% {
+    transform: rotate(-25deg)
+  }
+}
+
+@keyframes move-right {
+  100% {
+    transform: rotate(25deg)
   }
 }
