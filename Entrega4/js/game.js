@@ -29,6 +29,7 @@ class Game {
     this.start = false;
     this.deleteIntervals();
     this.intervals = [];
+    this.enemy = "";
     this.score = 0;
     this.enemyCount = 0;
     this.powerUpCount = 0;
@@ -43,6 +44,7 @@ class Game {
     let thisClass = this;
 
     $(document).on("keydown", function(e) {
+      e.preventDefault();
       if (thisClass.start) {
         thisClass.keys[e.keyCode] = true;
 
@@ -119,13 +121,16 @@ class Game {
     this.start = true;
     this.update();
     this.music.play();
+    let thisClass = this;
 
     document.getElementById("spaceship").addEventListener("animationend", () => {
       let elem = document.getElementById("spaceship").classList;
       if (elem.contains("explosion")) {
-        this.clear();
-        let derrota = "<h1 id='gameOver' class='gameOver'>Perdiste</h1>";
-        $("#game").append(derrota);
+        setTimeout(function () {
+          thisClass.clear();
+          let derrota = "<h1 id='gameOver' class='gameOver'>Perdiste</h1>";
+          $("#game").append(derrota);
+        }, 100);
       }
     });
   }
@@ -140,7 +145,8 @@ class Game {
     this.usableEnemies = [];
     this.powerUpList = [];
     this.keys = [];
-    // this.intervals = [];
+    this.intervals = [];
+    this.enemy = "";
     this.score = 0;
     this.enemyCount = 0;
     this.powerUpCount = 0;
@@ -153,6 +159,7 @@ class Game {
 
     $("#spaceship").remove();
     $("div").remove(".enemy");
+    $("div").remove(".powerUp");
     this.music.pause();
     this.music.currentTime = 0;
 
@@ -218,6 +225,9 @@ class Game {
           if (object == "powerUp") {
             this.powerUp = object + objectId;
           }
+          else {
+            this.enemy = object + objectId;
+          }
           return true;
         }
       }
@@ -238,7 +248,6 @@ class Game {
   gameOver() {
     this.deleteIntervals();
     this.start = false;
-    this.spaceship.setAnimation("explosion");
     this.setHighScore();
     this.deleteEvents();
   }
@@ -292,6 +301,27 @@ class Game {
         let posX = parseInt(elem.left, 10);
         let posY = parseInt(elem.bottom, 10);
 
+        if (thisClass.powerUp != "") {
+          let elemDiv = document.getElementById(thisClass.powerUp);
+          let rect = elemDiv.getBoundingClientRect();
+          let elemPU = elemDiv.style;
+          let posYPU = parseInt(rect.bottom, 10);
+          elemPU.bottom = posYPU + "px";
+          console.log(rect);
+
+          // let powerUpObject = "";
+          // for (var i = 0; i < thisClass.powerUpList.length; i++) {
+          //   if ("powerUp" + thisClass.powerUpList[i].id == thisClass.powerUp) {
+          //     powerUpObject = thisClass.powerUpList[i];
+          //     break;
+          //   }
+          // }
+          // if (powerUpObject != "") {
+          //   console.log(rect.bottom);
+          //   powerUpObject.setPos(rect.left, rect.bottom);
+          // }
+        }
+
         if (thisClass.keys[thisClass.keyCodes.left]) {
           thisClass.moveLeft(elem, posX, thisClass.factorMovimiento);
         }
@@ -308,11 +338,18 @@ class Game {
 
         let result = thisClass.detectCollision("enemy");
         if (result) {
-          thisClass.gameOver();
+          thisClass.spaceship.setAnimation("explosion");
+          let animationPause = "animationPause";
+          document.getElementById(thisClass.enemy).classList.add(animationPause);
+          thisClass.deleteEvents();
+          thisClass.deleteIntervals();
+          $(spaceship).on("animationend", function () {
+            thisClass.gameOver();
+          });
         }
 
 
-        if (thisClass.randomBetween(0, 200) <= 1) {     //Spawn rate
+        if (thisClass.randomBetween(0, 100) <= 1) {     //Spawn rate
           let enemy = "";
 
           if (thisClass.usableEnemies.length == 0) {
@@ -343,8 +380,6 @@ class Game {
             }
           });
 
-          // let n = thisClass.randomBetween(1, 3);
-          // let animation = "dropObject" + n;
           let animation = "dropObject1";
           enemy.setAnimationObject(animation, "enemy");
           if (thisClass.usedEnemies.includes(enemy)) {
@@ -353,7 +388,7 @@ class Game {
 
         }
 
-        if (thisClass.randomBetween(0, 200) <= 1) {     //Spawn rate
+        if (thisClass.randomBetween(0, 1000) <= 1) {     //Spawn rate
           let powerUp = "";
           powerUp = thisClass.generatePowerUp();
 
@@ -365,8 +400,6 @@ class Game {
 
           thisClass.powerUpList.unshift(powerUp);
 
-          // let n = thisClass.randomBetween(1, 3);
-          // let animation = "dropObject" + n;
           let animation = "dropObject1";
           powerUp.setAnimationObject(animation, "powerUp");
           document.getElementById("powerUp"+powerUp.id).classList.add(animation);
@@ -375,16 +408,11 @@ class Game {
           $(powerUpId).on("animationend", function () {
             powerUp.animatedEnd = true;
             this.remove();
+            thisClass.powerUp = "";
           });
         }
 
         if (thisClass.detectCollision("powerUp")) {
-          thisClass.score += 500;
-          document.getElementById("score").innerHTML = thisClass.score;
-          thisClass.setVelocidad(12);
-          setTimeout(function() {
-            thisClass.setVelocidad(8);
-          }, 3000);
           let powerUp = thisClass.powerUp;
           let powerUpObject = "";
           for (var i = 0; i < thisClass.powerUpList.length; i++) {
@@ -393,12 +421,24 @@ class Game {
               break;
             }
           }
-          let animation = "reward";
-          powerUpObject.setAnimationObject(animation, "powerUp");
-          document.getElementById("powerUp"+powerUpObject.id).classList.add(animation);
-          thisClass.remove(powerUp);
+          if (!powerUpObject.powerUp) {
+            thisClass.score += 500;
+            document.getElementById("score").innerHTML = thisClass.score;
+            thisClass.setVelocidad(10);
+            setTimeout(function() {
+              thisClass.setVelocidad(8);
+            }, 3000);
+            setTimeout(function() {
+              let animation = "reward";
+              powerUpObject.setAnimationObject(animation, "powerUp");
+              document.getElementById("powerUp"+powerUpObject.id).classList.add(animation);
+              setTimeout(function() {
+                thisClass.powerUp = "";
+              }, 20);
+            }, 100);
+            powerUpObject.powerUp = true;
+          }
         }
-
       }, 20);
 
       this.intervals.unshift(interval1);

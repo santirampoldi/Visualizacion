@@ -55,9 +55,4 @@ class gameObject {
     elem.classList.add(animation);
   }
 
-  // setAnimationPowerUp(animation) {
-  //   let id = "powerUp" + this.id;
-  //   let elem = document.getElementById(id);
-  //   elem.classList.add(animation);
-  // }
 }
