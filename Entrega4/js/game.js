@@ -145,7 +145,6 @@ class Game {
     this.usableEnemies = [];
     this.powerUpList = [];
     this.keys = [];
-    this.intervals = [];
     this.enemy = "";
     this.score = 0;
     this.enemyCount = 0;
@@ -170,18 +169,15 @@ class Game {
       num: 0,
       htmlDOM: '<div id="spaceship" class="spaceship"></div>'
     });
+    this.intervals = [];
 
   }
 
   deleteIntervals() {
     if (this.intervals) {
-      // console.log(this.intervals.length); //Llega aca con size = 0
       for (let i = 0; i < this.intervals.length; i++) {
-        // console.log("borrando intervalo:" + this.intervals[i]);
         clearInterval(this.intervals[i]);
       }
-      this.intervals = [];
-      // console.log(this.intervals.length);
     }
   }
 
@@ -287,163 +283,148 @@ class Game {
 
   update() {
     let thisClass = this;
-    if (thisClass.start) {
-      let elem = document.getElementById("game");
-      elem.innerHTML += this.spaceship.element;
-      this.spaceship.setPos("250px", "40px");
+    let elem = document.getElementById("game");
+    elem.innerHTML += this.spaceship.element;
+    this.spaceship.setPos("250px", "40px");
 
-      let interval1 = setInterval(function () {
-        if (!thisClass.start) {
-          // console.log("se borra" + interval1);
-          clearInterval(interval1);
-        }
-        let elem = document.getElementById("spaceship").style;
-        let posX = parseInt(elem.left, 10);
-        let posY = parseInt(elem.bottom, 10);
+    let interval1 = setInterval(function () {
+      if (!thisClass.start) {
+        clearInterval(interval1);
+      }
+      let elem = document.getElementById("spaceship").style;
+      let posX = parseInt(elem.left, 10);
+      let posY = parseInt(elem.bottom, 10);
 
-        if (thisClass.powerUp != "") {
-          let elemDiv = document.getElementById(thisClass.powerUp);
+      if (thisClass.powerUp != "") {
+        let elemDiv = document.getElementById(thisClass.powerUp);
+        if (elemDiv) {
           let rect = elemDiv.getBoundingClientRect();
           let elemPU = elemDiv.style;
           let posYPU = parseInt(rect.bottom, 10);
           elemPU.bottom = posYPU + "px";
-          console.log(rect);
+        }
+      }
 
-          // let powerUpObject = "";
-          // for (var i = 0; i < thisClass.powerUpList.length; i++) {
-          //   if ("powerUp" + thisClass.powerUpList[i].id == thisClass.powerUp) {
-          //     powerUpObject = thisClass.powerUpList[i];
-          //     break;
-          //   }
-          // }
-          // if (powerUpObject != "") {
-          //   console.log(rect.bottom);
-          //   powerUpObject.setPos(rect.left, rect.bottom);
-          // }
+      if (thisClass.keys[thisClass.keyCodes.left]) {
+        thisClass.moveLeft(elem, posX, thisClass.factorMovimiento);
+      }
+      else if (thisClass.keys[thisClass.keyCodes.right]) {
+        thisClass.moveRight(elem, posX, thisClass.factorMovimiento);
+      }
+
+      if (thisClass.keys[thisClass.keyCodes.up]) {
+        thisClass.moveUp(elem, posY, thisClass.factorMovimiento);
+      }
+      else if (thisClass.keys[thisClass.keyCodes.down]) {
+        thisClass.moveDown(elem, posY, thisClass.factorMovimiento);
+      }
+
+      let result = thisClass.detectCollision("enemy");
+      if (result) {
+        thisClass.spaceship.setAnimation("explosion");
+        let animationPause = "animationPause";
+        document.getElementById(thisClass.enemy).classList.add(animationPause);
+        thisClass.deleteEvents();
+        thisClass.deleteIntervals();
+        $(spaceship).on("animationend", function () {
+          thisClass.gameOver();
+        });
+      }
+
+
+      if (thisClass.randomBetween(0, 100) <= 1) {     //Spawn rate
+        let enemy = "";
+
+        if (thisClass.usableEnemies.length == 0) {
+          enemy = thisClass.generateEnemy();
+        }
+        else {
+          enemy = thisClass.usableEnemies.shift();
         }
 
-        if (thisClass.keys[thisClass.keyCodes.left]) {
-          thisClass.moveLeft(elem, posX, thisClass.factorMovimiento);
-        }
-        else if (thisClass.keys[thisClass.keyCodes.right]) {
-          thisClass.moveRight(elem, posX, thisClass.factorMovimiento);
-        }
+        $("#game").append(enemy.element);
+        let posX = thisClass.randomBetween(0, 580);
+        enemy.setPos(posX + "px", "400px");
+        thisClass.usedEnemies.unshift(enemy);
 
-        if (thisClass.keys[thisClass.keyCodes.up]) {
-          thisClass.moveUp(elem, posY, thisClass.factorMovimiento);
-        }
-        else if (thisClass.keys[thisClass.keyCodes.down]) {
-          thisClass.moveDown(elem, posY, thisClass.factorMovimiento);
-        }
+        let enemyId = "#enemy" + enemy.id;
 
-        let result = thisClass.detectCollision("enemy");
-        if (result) {
-          thisClass.spaceship.setAnimation("explosion");
-          let animationPause = "animationPause";
-          document.getElementById(thisClass.enemy).classList.add(animationPause);
-          thisClass.deleteEvents();
-          thisClass.deleteIntervals();
-          $(spaceship).on("animationend", function () {
-            thisClass.gameOver();
-          });
-        }
-
-
-        if (thisClass.randomBetween(0, 100) <= 1) {     //Spawn rate
-          let enemy = "";
-
-          if (thisClass.usableEnemies.length == 0) {
-            enemy = thisClass.generateEnemy();
+        $(enemyId).on("animationend", function () {
+          enemy.animatedEnd = true;
+          let index = thisClass.usedEnemies.indexOf(enemy);
+          if (index > -1) {
+            let e = thisClass.usedEnemies.splice(index, 1)[0];
+            thisClass.usableEnemies.unshift(e);
           }
-          else {
-            enemy = thisClass.usableEnemies.shift();
-          }
-
-          $("#game").append(enemy.element);
-          let posX = thisClass.randomBetween(0, 580);
-          enemy.setPos(posX + "px", "400px");
-          thisClass.usedEnemies.unshift(enemy);
-
-          let enemyId = "#enemy" + enemy.id;
-
-          $(enemyId).on("animationend", function () {
-            enemy.animatedEnd = true;
-            let index = thisClass.usedEnemies.indexOf(enemy);
-            if (index > -1) {
-              let e = thisClass.usedEnemies.splice(index, 1)[0];
-              thisClass.usableEnemies.unshift(e);
-            }
-            this.remove();
-            if (thisClass.start) {
-              thisClass.score += 100;
-              document.getElementById("score").innerHTML = thisClass.score;
-            }
-          });
-
-          let animation = "dropObject1";
-          enemy.setAnimationObject(animation, "enemy");
-          if (thisClass.usedEnemies.includes(enemy)) {
-            document.getElementById("enemy"+enemy.id).classList.add(animation);
-          }
-
-        }
-
-        if (thisClass.randomBetween(0, 1000) <= 1) {     //Spawn rate
-          let powerUp = "";
-          powerUp = thisClass.generatePowerUp();
-
-          $("#game").append(powerUp.element);
-          let posX = thisClass.randomBetween(0, 580);
-          powerUp.setPos(posX + "px", "400px");
-
-          let powerUpId = "#powerUp" + powerUp.id;
-
-          thisClass.powerUpList.unshift(powerUp);
-
-          let animation = "dropObject1";
-          powerUp.setAnimationObject(animation, "powerUp");
-          document.getElementById("powerUp"+powerUp.id).classList.add(animation);
-
-
-          $(powerUpId).on("animationend", function () {
-            powerUp.animatedEnd = true;
-            this.remove();
-            thisClass.powerUp = "";
-          });
-        }
-
-        if (thisClass.detectCollision("powerUp")) {
-          let powerUp = thisClass.powerUp;
-          let powerUpObject = "";
-          for (var i = 0; i < thisClass.powerUpList.length; i++) {
-            if (("powerUp" + thisClass.powerUpList[i].id) == powerUp) {
-              powerUpObject = thisClass.powerUpList[i];
-              break;
-            }
-          }
-          if (!powerUpObject.powerUp) {
-            thisClass.score += 500;
+          this.remove();
+          if (thisClass.start) {
+            thisClass.score += 100;
             document.getElementById("score").innerHTML = thisClass.score;
-            thisClass.setVelocidad(10);
-            setTimeout(function() {
-              thisClass.setVelocidad(8);
-            }, 3000);
-            setTimeout(function() {
-              let animation = "reward";
-              powerUpObject.setAnimationObject(animation, "powerUp");
-              document.getElementById("powerUp"+powerUpObject.id).classList.add(animation);
-              setTimeout(function() {
-                thisClass.powerUp = "";
-              }, 20);
-            }, 100);
-            powerUpObject.powerUp = true;
+          }
+        });
+
+        let animation = "dropObject1";
+        enemy.setAnimationObject(animation, "enemy");
+        if (thisClass.usedEnemies.includes(enemy)) {
+          document.getElementById("enemy"+enemy.id).classList.add(animation);
+        }
+
+      }
+
+      if (thisClass.randomBetween(0, 1000) <= 1) {     //Spawn rate
+        let powerUp = "";
+        powerUp = thisClass.generatePowerUp();
+
+        $("#game").append(powerUp.element);
+        let posX = thisClass.randomBetween(0, 580);
+        powerUp.setPos(posX + "px", "400px");
+
+        let powerUpId = "#powerUp" + powerUp.id;
+
+        thisClass.powerUpList.unshift(powerUp);
+
+        let animation = "dropObject1";
+        powerUp.setAnimationObject(animation, "powerUp");
+        document.getElementById("powerUp"+powerUp.id).classList.add(animation);
+
+
+        $(powerUpId).on("animationend", function () {
+          powerUp.animatedEnd = true;
+          this.remove();
+          thisClass.powerUp = "";
+        });
+      }
+
+      if (thisClass.detectCollision("powerUp")) {
+        let powerUp = thisClass.powerUp;
+        let powerUpObject = "";
+        for (var i = 0; i < thisClass.powerUpList.length; i++) {
+          if (("powerUp" + thisClass.powerUpList[i].id) == powerUp) {
+            powerUpObject = thisClass.powerUpList[i];
+            break;
           }
         }
-      }, 20);
+        if (!powerUpObject.powerUp) {
+          thisClass.score += 500;
+          document.getElementById("score").innerHTML = thisClass.score;
+          thisClass.setVelocidad(10);
+          setTimeout(function() {
+            thisClass.setVelocidad(8);
+          }, 3000);
+          setTimeout(function() {
+            let animation = "reward";
+            powerUpObject.setAnimationObject(animation, "powerUp");
+            document.getElementById("powerUp"+powerUpObject.id).classList.add(animation);
+            setTimeout(function() {
+              thisClass.powerUp = "";
+            }, 20);
+          }, 100);
+          powerUpObject.powerUp = true;
+        }
+      }
+    }, 20);
 
-      this.intervals.unshift(interval1);
-      // console.log("se añadio" + interval1);
-    }
+    this.intervals.unshift(interval1);
   }
 
   remove(objectId) {
